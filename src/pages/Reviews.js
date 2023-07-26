@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import customAxios from "../services/api";
-import Card from "../components/cards/ReviewCard";
+import ReviewCard from "../components/cards/ReviewCard";
 
 const Reviews = () => {
   const [reviews, setReviews] = useState([]);
@@ -35,7 +35,7 @@ const Reviews = () => {
         <ul>
           {reviews.map((review) => (
             <li key={review.id}>
-              <Card review={review} includeHotelName={true} />
+              <ReviewCard review={review} includeHotelName={true} />
             </li>
           ))}
         </ul>
