@@ -8,8 +8,8 @@ const Layout = ({ children }) => {
     <>
       <header className="header">
         <nav className="nav">
-          <Link to="/" className="nav-link">
-            Home
+          <Link to="/search" className="nav-link">
+            Search
           </Link>
           {user && (
             <Link to="/reviews" className="nav-link">

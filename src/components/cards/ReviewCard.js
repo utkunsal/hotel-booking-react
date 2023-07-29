@@ -24,7 +24,7 @@ const ReviewCard = ({ review, includeHotelName }) => {
         </div>
       </div>
       <div className="card-body">
-        <p className="card-text">{review.text}</p>
+        <div className="card-text">{review.text}</div>
       </div>
       <div className="card-footer">{new Date(review.date)
         .toLocaleDateString('en-US', {

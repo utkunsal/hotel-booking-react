@@ -1,9 +1,11 @@
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
+import { Route, Routes, Navigate } from "react-router-dom";
+import Search from "./pages/Search";
 import Login from "./pages/Login";
 import Reviews from "./pages/Reviews";
+import HotelDetails from "./pages/HotelDetails";
+import PageNotFound from "./pages/PageNotFound";
 import { AuthContextProvider } from "./context/AuthContext";
 
 function App() {
@@ -12,7 +14,11 @@ function App() {
       <AuthContextProvider>
         <Layout>
           <Routes>
-            <Route path="/" element={<Home />}></Route>
+            <Route path="*" element={<Navigate to="/404" />}/>
+            <Route path="/404" element={<PageNotFound />} />
+            <Route path="/" element={<Navigate to="/search" />}/>
+            <Route path="/search" element={<Search />}></Route>
+            <Route path="/hotels/:hotelId" element={<HotelDetails />}></Route>
             <Route path="/login" element={
               <ProtectedRoute accessBy="non-authenticated">
                 <Login />
@@ -20,7 +26,7 @@ function App() {
             }></Route>
             <Route path="/reviews" element={
               <ProtectedRoute accessBy="authenticated">
-                <Reviews />
+                <Reviews source={"user"} size={2} includeHotelName={true}/>
               </ProtectedRoute>
             }></Route>
           </Routes>
