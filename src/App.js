@@ -2,7 +2,6 @@ import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Route, Routes, Navigate } from "react-router-dom";
 import Search from "./pages/Search";
-import Login from "./pages/Login";
 import Reviews from "./pages/Reviews";
 import HotelDetails from "./pages/HotelDetails";
 import PageNotFound from "./pages/PageNotFound";
@@ -19,11 +18,6 @@ function App() {
             <Route path="/" element={<Navigate to="/search" />}/>
             <Route path="/search" element={<Search />}></Route>
             <Route path="/hotels/:hotelId" element={<HotelDetails />}></Route>
-            <Route path="/login" element={
-              <ProtectedRoute accessBy="non-authenticated">
-                <Login />
-              </ProtectedRoute>
-            }></Route>
             <Route path="/reviews" element={
               <ProtectedRoute accessBy="authenticated">
                 <Reviews source={"user"} size={2} includeHotelName={true}/>

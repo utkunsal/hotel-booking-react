@@ -16,16 +16,24 @@ export const AuthContextProvider = ({ children }) => {
 
   const navigate = useNavigate();
 
-  const login = async (payload) => {
-    /* const response1 = await customAxios.post("/auth/register", payload, {
-      withCredentials: false,
-    }); */
+  const login = async (payload, onClose) => {
     const response = await customAxios.post("/auth/authenticate", payload, {
       withCredentials: true,
     });
-    localStorage.setItem("userProfile", JSON.stringify(response.data));
-    setUser(response.data);
-    navigate("/");
+    if(response?.data){
+      localStorage.setItem("userProfile", JSON.stringify(response.data));
+      setUser(response.data);
+      onClose();
+      return response.data
+    }
+    return null
+  };
+
+  const register = async (payload, onClose) => {
+    await customAxios.post("/auth/register", payload, {
+      withCredentials: false,
+    });
+    return login(payload, onClose);
   };
 
   const logout = async () => {
@@ -43,7 +51,7 @@ export const AuthContextProvider = ({ children }) => {
 
   return (
     <>
-      <AuthContext.Provider value={{ user, login, logout }}>
+      <AuthContext.Provider value={{ user, login, register, logout }}>
         {children}
       </AuthContext.Provider>
     </>
