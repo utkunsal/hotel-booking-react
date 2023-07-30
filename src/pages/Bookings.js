@@ -1,43 +1,37 @@
 import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import customAxios from "../services/api";
-import ReviewCard from "../components/cards/ReviewCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import RoomCard from "../components/cards/RoomCard";
 
-const Reviews = ({ source, size, includeHotelName }) => {
-  const [reviews, setReviews] = useState([]);
+const Bookings = () => {
+  const [bookings, setBookings] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const totalPages = useRef(0);
   const totalResults = useRef(0);
-  const elementRefToScroll = useRef();
-  const isFirstRenderRef = useRef(true);
+  const size = 10;
 
   useEffect(() => {
     const fetchReviews = () => {
       customAxios
-        .get(`/reviews/${source}?page=${currentPage}&size=${size}`, { withCredentials: true })
+        .get(`/bookings/user?page=${currentPage}&size=${size}`, { withCredentials: true })
         .then((response) => {
           if (response) {
-            setReviews(response.data.reviews);
+            setBookings(response.data.bookings);
             totalPages.current = response.data.totalPages
             totalResults.current = response.data.totalItems
           }
         })
         .catch((error) => {
-          console.error("Error fetching reviews:", error);
+          console.error("Error fetching bookings:", error);
         });
     };
     fetchReviews();
-  }, [currentPage, size, source]);
+  }, [currentPage]);
 
   useLayoutEffect(() => {
-    if (!isFirstRenderRef.current) {
-      source === 'user' ?
-      window.scrollTo({ top: 0, left:0 , behavior: "smooth" }) : elementRefToScroll.current?.scrollIntoView({ behavior: 'smooth' }); 
-    } else {
-      isFirstRenderRef.current = reviews.length ? false : true;
-    }
-  }, [reviews, source])
+    window.scrollTo({ top: 0, left:0 , behavior: "smooth" })
+  }, [bookings])
 
   const handleNextPage = () => {
     setCurrentPage(currentPage + 1);
@@ -50,15 +44,22 @@ const Reviews = ({ source, size, includeHotelName }) => {
   return (
     <div className="center-content">
       {totalResults.current > 0 ? 
-        <>
-          <div ref={elementRefToScroll} style={{fontSize: 13, paddingTop: 20}}>
-            {totalResults.current} review{totalResults.current !== 1 && "s"}. Showing {currentPage*size+1}-{Math.min((currentPage+1)*size,totalResults.current)}.
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{fontSize: 13,  paddingTop: 20}}>
+            {totalResults.current} booking{totalResults.current !== 1 && "s"}. Showing {currentPage*size+1}-{Math.min((currentPage+1)*size,totalResults.current)}.
           </div>
           <div>
             <ul>
-              {reviews.map((review) => (
-                <li key={review.id}>
-                  <ReviewCard review={review} includeHotelName={includeHotelName} />
+              {bookings.map((booking) => (
+                <li key={booking.id}>
+                  <RoomCard 
+                    payload={booking.room} 
+                    startDate={new Date(booking.startDate)} 
+                    endDate={new Date(booking.endDate)} 
+                    index={booking.room.number} 
+                    includeHotelName={true}
+                    id={booking.id}
+                  />
                 </li>
               ))}
             </ul>
@@ -72,14 +73,14 @@ const Reviews = ({ source, size, includeHotelName }) => {
               </button>
             </div>
           </div>
-        </>
+        </div>
       :
       <div style={{fontSize: 13}}>
-        no reviews yet
+        You don't have any bookings yet. Start exploring and make your first booking today!
       </div>
       }
     </div>
   );
 };
 
-export default Reviews;
+export default Bookings;

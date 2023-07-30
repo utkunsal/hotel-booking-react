@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import customAxios from "../services/api";
 import DatePicker from "react-datepicker";
 import Select from 'react-select';
 import Reviews from "./Reviews";
 import RoomCard from "../components/cards/RoomCard";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
 const HotelDetails = () => {
   const location = useLocation();
@@ -14,46 +16,42 @@ const HotelDetails = () => {
   const [capacity, setCapacity] = useState(); 
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const amountToGoBack = useRef(0);
   const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+  const hotelId = location?.pathname.split("/")[2];
 
   useEffect(() => {
     const getResults = async () => {
       setStartDate(new Date(searchParams.get("startDate")));
       setEndDate(new Date(searchParams.get("endDate")));
       setCapacity(searchParams.get("capacity"));
-      const hotelId = location?.pathname.split("/")[2];
       const response = await customAxios.get(`/hotels/${hotelId}?${searchParams.toString()}`, { withCredentials: true })
       setHotelWithRooms(response.data);
     }
     getResults();
-  }, [location?.pathname, searchParams])
-
-  /* const getStayDuration = () => {
-    const durationInDays = (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 3600 * 24);
-    return Math.max(Math.ceil(durationInDays),1);
-  };
-  const stayDuration = getStayDuration(); */
+    amountToGoBack.current -= 1;
+  }, [searchParams, hotelId])
 
   const handleGoBack = () => {
-    navigate(-1); 
+    navigate(amountToGoBack.current); 
   };
 
   const handleStartDateChange = (date) => {
-    setStartDate(date)
     const params = new URLSearchParams(searchParams); 
-    params.set('startDate', (new Date(startDate.getTime() - tzoffset)).toISOString().slice(0,10));
+    if (endDate && (endDate < date)){
+      params.set('endDate', (new Date(date.getTime() - tzoffset)).toISOString().slice(0,10));
+    }
+    params.set('startDate', (new Date(date.getTime() - tzoffset)).toISOString().slice(0,10));
     setSearchParams(params);
   };
 
   const handleEndDateChange = (date) => {
-    setEndDate(date)
     const params = new URLSearchParams(searchParams); 
-    params.set('endDate', (new Date(endDate.getTime() - tzoffset)).toISOString().slice(0,10));
+    params.set('endDate', (new Date(date.getTime() - tzoffset)).toISOString().slice(0,10));
     setSearchParams(params);
   };
 
   const handleCapacityChange = (capacity) => {
-    setCapacity(capacity)
     const params = new URLSearchParams(searchParams); 
     params.set('capacity', capacity);
     setSearchParams(params);
@@ -61,14 +59,9 @@ const HotelDetails = () => {
 
   return (
     <div>
-      <button onClick={handleGoBack} style={{
-        position: "fixed",
-        top: "5%",
-        left: "5%",
-        }}>
-        Go Back
+      <button className="back-button" onClick={handleGoBack}>
+        <FontAwesomeIcon icon={faChevronLeft}/>
       </button>
-
       {hotelWithRooms.hotel && (
         <div>
           <div className="card">
@@ -81,19 +74,22 @@ const HotelDetails = () => {
             }} alt="Hotel" />          
             <div className="card-body" style={{borderBottomLeftRadius: 8, borderBottomRightRadius: 8}}>
               <div className="container-spaced" style={{padding: 20}}>
-                <div>
+                <div style={{ width: "85%" }}>
                   <div style={{fontSize: 22}}>{hotelWithRooms.hotel.name}</div>
                   <div style={{fontSize: 19, color: "#666666"}}>{hotelWithRooms.hotel.city}, {hotelWithRooms.hotel.country}</div>
+                  <div style={{fontSize: 16, color: "#666666", padding: 20}}>{hotelWithRooms.hotel.description}</div>
                 </div>
-                <div className="card-details">
+                <div className="card-details" style={{width: "15%"}}>
                   <div style={{fontSize: 15}}>Rating</div>
-                  <div style={{fontSize: 23}}>{hotelWithRooms.avgRating == null ? "-" : hotelWithRooms.avgRating}/5</div>
+                  <div style={{ fontSize: '23px', display: 'flex', alignItems: 'center' }}>
+                    <span style={{ marginRight: '5px' }}>&#11089;</span>
+                    {hotelWithRooms.avgRating == null ? "-" : hotelWithRooms.avgRating}/5
+                  </div>                  
                   {hotelWithRooms.reviewCount === 0 ? <div style={{fontSize: 15}}>no reviews yet</div>:
                   <div style={{fontSize: 13}}>{hotelWithRooms.reviewCount} review{hotelWithRooms.reviewCount !== 1 && "s"}</div>
                   }
                 </div>
               </div> 
-
             </div>
           </div>
 
@@ -110,7 +106,6 @@ const HotelDetails = () => {
                 selectsStart
                 startDate={startDate}
                 endDate={endDate}
-                maxDate={endDate}
                 dateFormat="MMMM d, yyyy"
                 onChange={date => handleStartDateChange(date)}
               />
@@ -120,7 +115,7 @@ const HotelDetails = () => {
               <DatePicker
                 className="picker"
                 placeholderText="Select a Date"
-                selected={endDate}
+                selected={endDate && Math.max(startDate,endDate)}
                 selectsEnd
                 startDate={startDate}
                 endDate={endDate}
@@ -148,7 +143,7 @@ const HotelDetails = () => {
               <ul>
                 {hotelWithRooms.rooms.map((room, index) => (
                   <li key={room.id}>
-                    <RoomCard payload={room} startDate={startDate} endDate={endDate} index={index + 1} />
+                    <RoomCard payload={room} startDate={startDate} endDate={endDate} index={index + 1} includeHotelName={false} />
                   </li>
                 ))}
               </ul>

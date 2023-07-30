@@ -36,11 +36,12 @@ const Layout = ({ children }) => {
           <Link to="/search" className="nav-link">
             Search
           </Link>
-          {true && (
-            <Link to="/reviews" className="nav-link" onClick={handleOpenLoginPopup}>
-              Reviews
-            </Link>
-          )}
+          <Link to="/reviews" className="nav-link" onClick={handleOpenLoginPopup}>
+            Reviews
+          </Link>
+          <Link to="/bookings" className="nav-link" onClick={handleOpenLoginPopup}>
+            Bookings
+          </Link>
           <div className="nav-right">
             {user && <span className="nav-username">{user.name}</span>}
             {!user && (

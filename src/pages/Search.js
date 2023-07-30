@@ -160,9 +160,13 @@ const Search = () => {
                 selectsStart
                 startDate={startDate}
                 endDate={endDate}
-                maxDate={endDate}
                 dateFormat="MMMM d, yyyy"
-                onChange={date => setStartDate(date)}
+                onChange={date => {
+                  setStartDate(date);
+                  if (endDate && (endDate < date)){
+                    setEndDate(date);
+                  }
+                }}
               />
             </div>
             <div className="form-group">
@@ -170,7 +174,7 @@ const Search = () => {
               <DatePicker
                 className="picker"
                 placeholderText="Select a Date"
-                selected={endDate}
+                selected={endDate && Math.max(startDate,endDate)}
                 selectsEnd
                 startDate={startDate}
                 endDate={endDate}

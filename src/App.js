@@ -6,6 +6,7 @@ import Reviews from "./pages/Reviews";
 import HotelDetails from "./pages/HotelDetails";
 import PageNotFound from "./pages/PageNotFound";
 import { AuthContextProvider } from "./context/AuthContext";
+import Bookings from "./pages/Bookings";
 
 function App() {
   return (
@@ -21,6 +22,11 @@ function App() {
             <Route path="/reviews" element={
               <ProtectedRoute accessBy="authenticated">
                 <Reviews source={"user"} size={2} includeHotelName={true}/>
+              </ProtectedRoute>
+            }></Route>
+            <Route path="/bookings" element={
+              <ProtectedRoute accessBy="authenticated">
+                <Bookings/>
               </ProtectedRoute>
             }></Route>
           </Routes>

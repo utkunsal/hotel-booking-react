@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import customAxios from "../../services/api";
 import { 
   faWifi, 
   faCoffee, 
@@ -12,10 +13,15 @@ import {
   faCircle,
   faUser,
   faUpRightAndDownLeftFromCenter,
+  faCheck,
 } from '@fortawesome/free-solid-svg-icons';
 
 
-const RoomCard = ({ payload, startDate, endDate, index }) => {
+const RoomCard = ({ payload, startDate, endDate, index, includeHotelName, id }) => {
+  const [bookingId, setBookingId] = useState(id ? id : null);
+  const [bookingStatus, setBookingStatus] = useState("");
+  const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+
   const stayDuration = Math.max(Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)),1);
   const amenityIcons = {
     "Air conditioning": faSnowflake,
@@ -38,28 +44,95 @@ const RoomCard = ({ payload, startDate, endDate, index }) => {
     </React.Fragment>
   ));
 
+  const handleBookRoom = () => {
+    const bookingData = {
+      roomId: payload.id,
+      startDate: (new Date(startDate.getTime() - tzoffset)).toISOString().slice(0,10),
+      endDate: (new Date(endDate.getTime() - tzoffset)).toISOString().slice(0,10),
+    };
+
+    customAxios
+      .post(`/bookings`, bookingData, { withCredentials: true })
+      .then((response) => {
+        if (response.status === 200) {
+          setBookingId(response.data.id)
+          setBookingStatus("");
+        }
+      })
+      .catch(() => {
+        setBookingStatus("Booking failed. Please refresh and try again.");
+      });
+  };
+
+  const handleCancelBooking = () => {
+    customAxios
+      .delete(`/bookings/${bookingId}`, { withCredentials: true })
+      .then((response) => {
+        if (response.status === 200) {
+          setBookingId(null)
+          setBookingStatus("");
+        } 
+      })
+      .catch(() => {
+        setBookingStatus("Failed. Please try again.");
+      });
+  };
+
   return (
-    <div className="card" >
-      <div className="card-body" >
+    <div className="card card-body">
+        
         <div className="container-spaced" style={{padding: 20}}>
-          <div style={{maxWidth: 550}}>
-            <div style={{ fontSize: 14, marginBottom: 5 }}>Room {index}</div>
+          <div style={{width: "61%"}}>
+            {includeHotelName &&
+              <>
+                <div style={{fontSize: 20}}>{payload.hotel.name}</div>
+                <div style={{fontSize: 16, color: "#666666", marginBottom: 10}}>{payload.hotel.city}, {payload.hotel.country}</div>
+              </>
+            }
+            <div style={{ fontSize: 14, marginBottom: 8 }}>{id ? "Room" : "Room Option"} {index}</div>
             <div style={{ fontSize: 14, color: "#606060", marginBottom: 5 }}>
               <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} style={{ marginRight: 5, fontSize: "11px" }} />
               {payload.size}
             </div>
-            <div style={{ fontSize: 14, color: "#606060" }}>{amenitiesList}</div>
+            <div style={{ fontSize: 14, color: "#505050", lineHeight: 1.8 }}>{amenitiesList}</div>
           </div>
-          <div className="card-details">
+          <div className="card-details" style={{width: "39%"}}>
+            {includeHotelName && 
+              <div>{startDate.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })} to {endDate.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </div>
+            }
             <div style={{ fontSize: 21, color: "darkred" }}>{payload.price * stayDuration}$</div>
             <div style={{fontSize: 14}}>{stayDuration} night{stayDuration !== 1 && "s"}</div>
             <div style={{ fontSize: 14, color: "#606060" }}>
               {payload.capacity} 
               <FontAwesomeIcon icon={faUser} style={{ marginLeft: 5 }} />
             </div>
+            {!bookingId ? 
+            <button className="book-button" onClick={handleBookRoom}>
+              Book
+            </button>
+            :
+            <>
+              <div style={{fontSize: 15, color: "green", marginTop: 12, marginRight: 4.5}}>
+                <FontAwesomeIcon icon={faCheck} style={{ marginRight: 5 }} />
+                Booked
+              </div>
+              {startDate.getTime() > new Date().getTime() && <button className="cancel-button" onClick={handleCancelBooking}>
+                Cancel
+              </button>}
+            </>
+            }
+            {bookingStatus && <div className="warning" >{bookingStatus}</div>}
           </div>
         </div> 
-      </div>
     </div>
   );
 };

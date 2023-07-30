@@ -17,8 +17,8 @@ const ReviewCard = ({ review, includeHotelName }) => {
 
   return (
     <div className="card">
-      <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
-        {includeHotelName && <div className="card-text">{review.hotelName}</div>}
+      <div className="card-header">
+        {includeHotelName && <div>{review.hotelName}</div>}
         <div>
           {review.userDisplayName} - {stars}
         </div>
@@ -26,7 +26,7 @@ const ReviewCard = ({ review, includeHotelName }) => {
       <div className="card-body">
         <div className="card-text">{review.text}</div>
       </div>
-      <div className="card-footer">{new Date(review.date)
+      <div className="card-footer" style={{paddingBottom: 10}}>{new Date(review.date)
         .toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'long',

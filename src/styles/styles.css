@@ -61,10 +61,11 @@
 }
 
 .card-header {
-  background-color: #f0f0f0;
+  background-color: #fafafa;
   color: #666;
   padding: 10px;
-  border-bottom: 1px solid #ccc;
+  padding-left: 30px;
+  /* border-bottom: 1px solid #ccc; */
   border-radius: 8px 8px 0 0;
   display: flex;
   justify-content: space-between;
@@ -78,6 +79,10 @@
 
 .card-text {
   margin: 1;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-top: -8px;
+  margin-bottom: -8px;
 }
 
 .card-details {
@@ -88,11 +93,12 @@
 }
 
 .card-footer {
-  background-color: #f0f0f0;
+  background-color: #fafafa;
   text-align: end;
   color: #666;
   padding: 5px;
-  border-top: 1px solid #ccc;
+  /* border-top: 1px solid #ccc; */
+  padding-right: 30px;
   border-radius: 0 0 8px 8px;
 }
 
@@ -143,6 +149,56 @@ li {
   border: none;
   cursor: pointer;
   color: #333;
+}
+
+.book-button {
+  background-color: #4ba758;
+  color: #fff;
+  font-size: 14.5px;
+  padding: 7px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+.book-button:hover {
+  background-color: #54b761;
+ /*  font-size: 16px;
+  padding: 6px 22px; */
+}
+
+.cancel-button {
+  background-color: #fafafa;
+  color: #831313;
+  padding: 5px 17.5px;
+  border: 1.5px solid #831313;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 7px;
+}
+
+.cancel-button:hover {
+  background-color: #831313;
+  color: #fafafa;
+}
+
+.back-button {
+  background-color: #fafafa;
+  color: #666666;
+  font-size: 16px;
+  padding: 6px 10.5px;
+  border: 1.5px solid #a0a0a0;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: -2px;
+  margin-bottom: 13.5px;
+}
+
+.back-button:hover {
+  background-color: #bdbdbd;
+  border-color: #bdbdbd;
+  color: #fafafa;
 }
 
 /* Center content styles */
