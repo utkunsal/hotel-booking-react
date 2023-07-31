@@ -55,17 +55,17 @@ const PopupRegisterForm = ({ isOpen, onClose, openLogin }) => {
         &times;
       </button>
       <form onSubmit={registerSubmit}>
-        <div className='center-content'>
-          <div>
+        <div className='center-content' style={{lineHeight: 0.5}}>
+          <>
             <label htmlFor="name">Name</label>
             <input type="text" id="register-name" name="name" required ref={name} />
             <label htmlFor="email">Email</label>
             <input type="email" id="register-email" name="email" required ref={email} />
             <label htmlFor="password">Password</label>
             <input type="password" id="register-password" name="password" required ref={password} />
-          </div>
+          </>
           <div className="btn-container">
-            <div className="warning" style={{marginTop: -12, marginBottom: 5, textAlign: "center"}}>{warning && `${warning}`}</div>
+            <div className="warning" style={{marginTop: -8, marginBottom: 5, textAlign: "center"}}>{warning && `${warning}`}</div>
             <button className='auth-button' type="submit" style={{marginBottom: -17}}>Create Account</button>
           </div>
         </div>

@@ -18,7 +18,7 @@ import {
 import AuthContext from "../../context/AuthContext";
 
 
-const RoomCard = ({ payload, startDate, endDate, index, includeHotelName, id }) => {
+const RoomCard = ({ payload, startDate, endDate, index, includeHotel, id }) => {
   const { user, handleOpenLoginPopup } = useContext(AuthContext);
   const [bookingId, setBookingId] = useState(id ? id : null);
   const [bookingStatus, setBookingStatus] = useState("");
@@ -84,8 +84,22 @@ const RoomCard = ({ payload, startDate, endDate, index, includeHotelName, id }) 
     <div className="card card-body">
         
         <div className="container-spaced" style={{padding: 20}}>
-          <div style={{width: "61%"}}>
-            {includeHotelName &&
+
+          {includeHotel &&
+            <img src={payload.hotel.imageUrls[0]} style={{ 
+            width: "20%", 
+            height: undefined,
+            objectFit: "cover",
+            borderTopLeftRadius: 8,
+            borderBottomLeftRadius: 8,
+            marginLeft: -30,
+            marginTop: -30,
+            marginBottom: -30,
+            }} alt="Hotel" />
+          }
+
+          <div style={{width: "51%"}}>
+            {includeHotel &&
               <>
                 <div style={{fontSize: 20}}>{payload.hotel.name}</div>
                 <div style={{fontSize: 16, color: "#666666", marginBottom: 10}}>{payload.hotel.city}, {payload.hotel.country}</div>
@@ -98,8 +112,8 @@ const RoomCard = ({ payload, startDate, endDate, index, includeHotelName, id }) 
             </div>
             <div style={{ fontSize: 14, color: "#505050", lineHeight: 1.8 }}>{amenitiesList}</div>
           </div>
-          <div className="card-details" style={{width: "39%"}}>
-            {includeHotelName && 
+          <div className="card-details" style={{width: "29%"}}>
+            {includeHotel && 
               <div>{startDate.toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',

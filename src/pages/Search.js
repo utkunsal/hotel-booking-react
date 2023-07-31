@@ -106,10 +106,10 @@ const Search = () => {
 
   const renderResults = () => {
     if (results.length === 0) {
-      return <div>No hotels found.</div>;
+      return <div className="centered-text">No hotels found.</div>;
     }
     return (
-      <div>
+      <>
         <div style={{fontSize: 13}}>
         {totalResults.current} hotel{totalResults.current !== 1 && "s"} found. Showing {currentPage.current*10+1}-{Math.min((currentPage.current+1)*10,totalResults.current)}.
         </div>
@@ -129,15 +129,15 @@ const Search = () => {
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
           </div>
-      </div>
+      </>
     );
   };
 
   return (
     <>
-      <div>
+      <>
         <div className="container">
-          <div className="centered-text">Welcome</div>
+          <p className="centered-text">Welcome</p>
           <div className="center-content search-form">
             <div className="form-group">
               <label>Location</label>
@@ -201,7 +201,7 @@ const Search = () => {
           </div>
         </div>
         {renderResults()}
-      </div>
+      </>
     </>
   );
 };

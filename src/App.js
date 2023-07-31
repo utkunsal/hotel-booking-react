@@ -21,7 +21,7 @@ function App() {
             <Route path="/hotels/:hotelId" element={<HotelDetails />}></Route>
             <Route path="/reviews" element={
               <ProtectedRoute accessBy="authenticated">
-                <Reviews source={"user"} size={2} includeHotelName={true}/>
+                <Reviews source={"user"} size={10} includeHotelName={true}/>
               </ProtectedRoute>
             }></Route>
             <Route path="/bookings" element={

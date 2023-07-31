@@ -48,7 +48,7 @@ const Bookings = () => {
           <div style={{fontSize: 13,  paddingTop: 20}}>
             {totalResults.current} booking{totalResults.current !== 1 && "s"}. Showing {currentPage*size+1}-{Math.min((currentPage+1)*size,totalResults.current)}.
           </div>
-          <div>
+          <>
             <ul>
               {bookings.map((booking) => (
                 <li key={booking.id}>
@@ -57,7 +57,7 @@ const Bookings = () => {
                     startDate={new Date(booking.startDate)} 
                     endDate={new Date(booking.endDate)} 
                     index={booking.room.number} 
-                    includeHotelName={true}
+                    includeHotel={true}
                     id={booking.id}
                   />
                 </li>
@@ -72,12 +72,12 @@ const Bookings = () => {
                 <FontAwesomeIcon icon={faChevronRight} />
               </button>
             </div>
-          </div>
+          </>
         </div>
       :
-      <div style={{fontSize: 13}}>
+      <p style={{fontSize: 13}}>
         You don't have any bookings yet. Start exploring and make your first booking today!
-      </div>
+      </p>
       }
     </div>
   );

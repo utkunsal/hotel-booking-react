@@ -4,9 +4,10 @@ import ReviewCard from "../components/cards/ReviewCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
-const Reviews = ({ source, size, includeHotelName }) => {
+const Reviews = ({ source, size, includeHotelName, refresh }) => {
   const [reviews, setReviews] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [innerRefresh, setInnerRefresh] = useState(true);
   const totalPages = useRef(0);
   const totalResults = useRef(0);
   const elementRefToScroll = useRef();
@@ -28,7 +29,7 @@ const Reviews = ({ source, size, includeHotelName }) => {
         });
     };
     fetchReviews();
-  }, [currentPage, size, source]);
+  }, [currentPage, size, source, refresh, innerRefresh]);
 
   useLayoutEffect(() => {
     if (!isFirstRenderRef.current) {
@@ -47,18 +48,22 @@ const Reviews = ({ source, size, includeHotelName }) => {
     setCurrentPage(currentPage - 1);
   };
 
+  const handleDeleteReview = () => {
+    setInnerRefresh(!innerRefresh);
+  }
+
   return (
-    <div className="center-content">
+    <div style={{ flexDirection: 'column' }}>
       {totalResults.current > 0 ? 
         <>
-          <div ref={elementRefToScroll} style={{fontSize: 13, paddingTop: 20}}>
+          <div ref={elementRefToScroll} className="center-content" style={{fontSize: 13, paddingTop: 20}}>
             {totalResults.current} review{totalResults.current !== 1 && "s"}. Showing {currentPage*size+1}-{Math.min((currentPage+1)*size,totalResults.current)}.
           </div>
-          <div>
+          <>
             <ul>
               {reviews.map((review) => (
                 <li key={review.id}>
-                  <ReviewCard review={review} includeHotelName={includeHotelName} />
+                  <ReviewCard review={review} includeHotelName={includeHotelName} handleDeleteReview={handleDeleteReview}/>
                 </li>
               ))}
             </ul>
@@ -71,12 +76,12 @@ const Reviews = ({ source, size, includeHotelName }) => {
                 <FontAwesomeIcon icon={faChevronRight} />
               </button>
             </div>
-          </div>
+          </>
         </>
       :
-      <div style={{fontSize: 13}}>
+      <p className="center-content" style={{fontSize: 13}}>
         You don't have any reviews yet.
-      </div>
+      </p>
       }
     </div>
   );
