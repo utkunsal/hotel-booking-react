@@ -75,7 +75,7 @@ const Reviews = ({ source, size, includeHotelName }) => {
         </>
       :
       <div style={{fontSize: 13}}>
-        no reviews yet
+        You don't have any reviews yet.
       </div>
       }
     </div>

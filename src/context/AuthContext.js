@@ -1,5 +1,4 @@
 import { createContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import customAxios from "../services/api";
 
 const AuthContext = createContext();
@@ -14,7 +13,28 @@ export const AuthContextProvider = ({ children }) => {
     return null;
   });
 
-  const navigate = useNavigate();
+  const [isLoginPopupOpen, setLoginPopupOpen] = useState(false);
+  const [isRegisterPopupOpen, setRegisterPopupOpen] = useState(false);
+
+  const handleOpenLoginPopup = () => {
+    if (!user) {
+      setLoginPopupOpen(true);
+    }
+  };
+
+  const handleCloseLoginPopup = () => {
+    setLoginPopupOpen(false);
+  };
+
+  const handleOpenRegisterPopup = () => {
+    if (!user) {
+      setRegisterPopupOpen(true);
+    }
+  };
+
+  const handleCloseRegisterPopup = () => {
+    setRegisterPopupOpen(false);
+  };
 
   const login = async (payload, onClose) => {
     const response = await customAxios.post("/auth/authenticate", payload, {
@@ -44,14 +64,18 @@ export const AuthContextProvider = ({ children }) => {
   const clearUser = async () => {
     localStorage.removeItem("userProfile");
     setUser(null);
-    navigate("/");
   };
 
   customAxios.setLogoutFunction(clearUser);
 
   return (
     <>
-      <AuthContext.Provider value={{ user, login, register, logout }}>
+      <AuthContext.Provider value={{ 
+        user, login, register, logout,
+        isLoginPopupOpen, isRegisterPopupOpen,
+        handleOpenLoginPopup, handleCloseLoginPopup,
+        handleOpenRegisterPopup, handleCloseRegisterPopup, 
+        }}>
         {children}
       </AuthContext.Provider>
     </>

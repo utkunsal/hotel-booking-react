@@ -1,6 +1,6 @@
 /* Header styles */
 .header {
-  background-color: #fd6e46;
+  background-color: #bb3547;
   color: #fff;
   padding: 10px 0;
   text-align: center;
@@ -19,14 +19,14 @@
   color: #fff;
   text-decoration: none;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   padding: 5px 10px;
   cursor: pointer;
   margin: 0 10px;
 }
 
 .nav-link:hover {
-  background-color: #ff9376;
+  text-shadow: #fff 1px 0 7px;
 }
 
 .nav-right {
@@ -34,22 +34,12 @@
   align-items: center;
 }
 
-.nav-username {
+.nav-user {
   margin-right: 10px;
-}
-
-.auth-button {
-  background-color: #fd6e46;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 15px;
-  cursor: pointer;
-  font-size: 14.5px;
-}
-
-.auth-button:hover {
-  background-color: #ff9376;
+  font-size: 11px;
+  max-width: 125px;
+  display: flex;
+  align-items: center;
 }
 
 /* Card styles */
@@ -114,7 +104,7 @@ li {
 
 /* Button styles */
 .button {
-  background-color: #fd6e46;
+  background-color: #bb3547;
   color: #fff;
   padding: 10px 20px;
   border: none;
@@ -123,16 +113,20 @@ li {
 }
 
 .button:hover {
-  background-color: #ff9376;
+  background-color: #d02a40;
 }
 
 .page-button {
-  background-color: #fd6e46;
+  background-color: #bb3547;
   color: #fff;
-  padding: 8px 20px;
+  padding: 10px 14px;
   border: none;
   border-radius: 20px;
   cursor: pointer;
+}
+
+.page-button:hover {
+  background-color: #d02a40;
 }
 
 .page-button:disabled {
@@ -199,6 +193,38 @@ li {
   background-color: #bdbdbd;
   border-color: #bdbdbd;
   color: #fafafa;
+}
+
+.auth-button {
+  background-color: #bb3547;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 15px;
+  cursor: pointer;
+  font-size: 14.5px;
+}
+
+.auth-button:hover {
+  background-color: #d02a40;
+}
+
+.header-auth-button {
+  background-color: #bb3547;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.header-auth-button:hover {
+  text-shadow: #fff 1px 0 7px;
+}
+
+.logout-button:hover {
+  box-shadow: #ffffff56 0px 0 7px;
 }
 
 /* Center content styles */
@@ -304,17 +330,15 @@ input {
 }
 
 /* Picker styles */
-/* .react-datepicker__day--selected {
-  background-color: #fd6e46;
+.react-datepicker__day--selected {
+  background-color: #cd6f7c !important;
+  color: #fff !important;
 }
 
 .react-datepicker__day--in-selecting-range {
-  background-color: #fd6e46;
+  background-color: #bb3547 !important;
+  color: #fff !important;
 }
-
-.react-datepicker-field__active--start {
-  background-color: #fd6e46;
-} */
 
 .picker {
   padding: 9px;
@@ -323,7 +347,7 @@ input {
   text-align: center;
   font-size: 15px;
   color: rgb(51, 51, 51);
-  outline-color: #fd6e46;
+  outline-color: #bb3547;
 }
 
 /* Popup overlay styles */
@@ -350,7 +374,10 @@ input {
 /* Popup content styles */
 .popup-content {
   background-color: #f3f3f3;
-  padding: 30px;
+  padding-top: 30px;
+  padding-right: 40px;
+  padding-left:  40px;
+  padding-bottom: 10px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   position: relative; 

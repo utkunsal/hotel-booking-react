@@ -85,7 +85,7 @@ const HotelDetails = () => {
                     <span style={{ marginRight: '5px' }}>&#11089;</span>
                     {hotelWithRooms.avgRating == null ? "-" : hotelWithRooms.avgRating}/5
                   </div>                  
-                  {hotelWithRooms.reviewCount === 0 ? <div style={{fontSize: 15}}>no reviews yet</div>:
+                  {hotelWithRooms.reviewCount === 0 ? <div style={{fontSize: 13}}>no reviews yet</div>:
                   <div style={{fontSize: 13}}>{hotelWithRooms.reviewCount} review{hotelWithRooms.reviewCount !== 1 && "s"}</div>
                   }
                 </div>
@@ -108,6 +108,7 @@ const HotelDetails = () => {
                 endDate={endDate}
                 dateFormat="MMMM d, yyyy"
                 onChange={date => handleStartDateChange(date)}
+                disabledKeyboardNavigation
               />
             </div>
             <div className="form-group">
@@ -122,6 +123,7 @@ const HotelDetails = () => {
                 minDate={startDate} 
                 dateFormat="MMMM d, yyyy"
                 onChange={date => handleEndDateChange(date)}
+                disabledKeyboardNavigation
               />
             </div>
             <div className="form-group">
@@ -169,6 +171,6 @@ const reactSelectTheme = (theme) => ({
     ...theme.colors,
     primary25: "#ebebeb",
     primary50: "#dddddd",
-    primary: "#fd6e46",
+    primary: "#bb3547",
   },
 })

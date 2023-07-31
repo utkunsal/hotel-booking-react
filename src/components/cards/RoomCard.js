@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import customAxios from "../../services/api";
 import { 
@@ -15,9 +15,11 @@ import {
   faUpRightAndDownLeftFromCenter,
   faCheck,
 } from '@fortawesome/free-solid-svg-icons';
+import AuthContext from "../../context/AuthContext";
 
 
 const RoomCard = ({ payload, startDate, endDate, index, includeHotelName, id }) => {
+  const { user, handleOpenLoginPopup } = useContext(AuthContext);
   const [bookingId, setBookingId] = useState(id ? id : null);
   const [bookingStatus, setBookingStatus] = useState("");
   const tzoffset = (new Date()).getTimezoneOffset() * 60000;
@@ -116,16 +118,16 @@ const RoomCard = ({ payload, startDate, endDate, index, includeHotelName, id }) 
               <FontAwesomeIcon icon={faUser} style={{ marginLeft: 5 }} />
             </div>
             {!bookingId ? 
-            <button className="book-button" onClick={handleBookRoom}>
+            <button className="book-button" onClick={user ? handleBookRoom : handleOpenLoginPopup}>
               Book
             </button>
             :
             <>
-              <div style={{fontSize: 15, color: "green", marginTop: 12, marginRight: 4.5}}>
+              <div style={{fontSize: 15, color: "green", marginTop: 13, marginRight: 4.5}}>
                 <FontAwesomeIcon icon={faCheck} style={{ marginRight: 5 }} />
                 Booked
               </div>
-              {startDate.getTime() > new Date().getTime() && <button className="cancel-button" onClick={handleCancelBooking}>
+              {startDate.getTime() > new Date().getTime() - (1000 * 3600 * 24) && <button className="cancel-button" onClick={handleCancelBooking}>
                 Cancel
               </button>}
             </>

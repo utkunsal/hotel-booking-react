@@ -156,6 +156,7 @@ const Search = () => {
                 }}
                 className="picker"
                 placeholderText="Select a Date"
+                disabledKeyboardNavigation
                 selected={startDate}
                 selectsStart
                 startDate={startDate}
@@ -174,6 +175,7 @@ const Search = () => {
               <DatePicker
                 className="picker"
                 placeholderText="Select a Date"
+                disabledKeyboardNavigation
                 selected={endDate && Math.max(startDate,endDate)}
                 selectsEnd
                 startDate={startDate}
@@ -214,6 +216,6 @@ const reactSelectTheme = (theme) => ({
     ...theme.colors,
     primary25: "#ebebeb",
     primary50: "#dddddd",
-    primary: "#fd6e46",
+    primary: "#bb3547",
   },
 })
