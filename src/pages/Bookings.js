@@ -3,10 +3,12 @@ import customAxios from "../services/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import RoomCard from "../components/cards/RoomCard";
+import ReactLoading from "react-loading";
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [done, setDone] = useState();
   const totalPages = useRef(0);
   const totalResults = useRef(0);
   const size = 10;
@@ -20,6 +22,7 @@ const Bookings = () => {
             setBookings(response.data.bookings);
             totalPages.current = response.data.totalPages
             totalResults.current = response.data.totalItems
+            setDone(true)
           }
         })
         .catch((error) => {
@@ -43,41 +46,50 @@ const Bookings = () => {
 
   return (
     <div className="center-content">
-      {totalResults.current > 0 ? 
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{fontSize: 13,  paddingTop: 20}}>
-            {totalResults.current} booking{totalResults.current !== 1 && "s"}. Showing {currentPage*size+1}-{Math.min((currentPage+1)*size,totalResults.current)}.
-          </div>
-          <>
-            <ul>
-              {bookings.map((booking) => (
-                <li key={booking.id}>
-                  <RoomCard 
-                    payload={booking.room} 
-                    startDate={new Date(booking.startDate)} 
-                    endDate={new Date(booking.endDate)} 
-                    index={booking.room.number} 
-                    includeHotel={true}
-                    id={booking.id}
-                  />
-                </li>
-              ))}
-            </ul>
-            <div className="btn-container-page">
-              <button className="page-button" onClick={handlePrevPage} disabled={currentPage === 0}>
-                <FontAwesomeIcon icon={faChevronLeft} />
-              </button>
-              <div style={{padding: 10}}>{currentPage + 1}/{totalPages.current}</div>
-              <button className="page-button" onClick={handleNextPage} disabled={currentPage >= totalPages.current - 1}>
-                <FontAwesomeIcon icon={faChevronRight} />
-              </button>
-            </div>
-          </>
-        </div>
+      {!done ? 
+        <ReactLoading
+          type={"spin"}
+          color={"#666666"}
+          height={30}
+          width={30}
+        />
       :
-      <p style={{fontSize: 13}}>
-        You don't have any bookings yet. Start exploring and make your first booking today!
-      </p>
+        <>{totalResults.current > 0 ? 
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{fontSize: 13,  paddingTop: 20}}>
+              {totalResults.current} booking{totalResults.current !== 1 && "s"}. Showing {currentPage*size+1}-{Math.min((currentPage+1)*size,totalResults.current)}.
+            </div>
+            <>
+              <ul>
+                {bookings.map((booking) => (
+                  <li key={booking.id}>
+                    <RoomCard 
+                      payload={booking.room} 
+                      startDate={new Date(booking.startDate)} 
+                      endDate={new Date(booking.endDate)} 
+                      index={booking.room.number} 
+                      includeHotel={true}
+                      id={booking.id}
+                    />
+                  </li>
+                ))}
+              </ul>
+              <div className="btn-container-page">
+                <button className="page-button" onClick={handlePrevPage} disabled={currentPage === 0}>
+                  <FontAwesomeIcon icon={faChevronLeft} />
+                </button>
+                <div style={{padding: 10}}>{currentPage + 1}/{totalPages.current}</div>
+                <button className="page-button" onClick={handleNextPage} disabled={currentPage >= totalPages.current - 1}>
+                  <FontAwesomeIcon icon={faChevronRight} />
+                </button>
+              </div>
+            </>
+          </div>
+          :
+          <p style={{fontSize: 13}}>
+            You don't have any bookings yet. Start exploring and make your first booking today!
+          </p>}
+        </>
       }
     </div>
   );

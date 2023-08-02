@@ -1,20 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import customAxios from "../services/api";
-import DatePicker from "react-datepicker";
-import Select from 'react-select';
 import Reviews from "./Reviews";
 import RoomCard from "../components/cards/RoomCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import WriteReview from "../components/WriteReview";
+import SearchForm from "../components/forms/SearchForm";
 
 const HotelDetails = () => {
   const location = useLocation();
   const [hotelWithRooms, setHotelWithRooms] = useState({});
-  const [startDate, setStartDate] = useState(); 
-  const [endDate, setEndDate] = useState(); 
-  const [capacity, setCapacity] = useState(); 
+  const startDate = useRef()
+  const endDate = useRef()
+  const capacity = useRef()
   const [searchParams, setSearchParams] = useSearchParams();
   const [refresh, setRefresh] = useState(false);
   const navigate = useNavigate();
@@ -24,9 +23,9 @@ const HotelDetails = () => {
 
   useEffect(() => {
     const getResults = async () => {
-      setStartDate(new Date(searchParams.get("startDate")));
-      setEndDate(new Date(searchParams.get("endDate")));
-      setCapacity(searchParams.get("capacity"));
+      startDate.current = new Date(searchParams.get("startDate"));
+      endDate.current = new Date(searchParams.get("endDate"));
+      capacity.current = searchParams.get("capacity");
       const response = await customAxios.get(`/hotels/${hotelId}?${searchParams.toString()}`, { withCredentials: true })
       setHotelWithRooms(response.data);
     }
@@ -40,7 +39,7 @@ const HotelDetails = () => {
 
   const handleStartDateChange = (date) => {
     const params = new URLSearchParams(searchParams); 
-    if (endDate && (endDate < date)){
+    if (endDate.current && (endDate.current < date)){
       params.set('endDate', (new Date(date.getTime() - tzoffset)).toISOString().slice(0,10));
     }
     params.set('startDate', (new Date(date.getTime() - tzoffset)).toISOString().slice(0,10));
@@ -99,49 +98,14 @@ const HotelDetails = () => {
 
           <p className="center-content" style={{fontSize: 18, paddingTop: 30, paddingBottom: 10}}>Choose your room</p>
 
-          <div className="center-content search-form">
-            <div className="form-group">
-              <label>Check-in Date</label>
-              <DatePicker
-                filterDate={d => {
-                  return d.getTime() > new Date().getTime() - (1000 * 3600 * 24);
-                }}
-                className="picker"
-                placeholderText="Select a Date"
-                selected={startDate}
-                selectsStart
-                startDate={startDate}
-                endDate={endDate}
-                dateFormat="MMMM d, yyyy"
-                onChange={date => handleStartDateChange(date)}
-                disabledKeyboardNavigation
-              />
-            </div>
-            <div className="form-group">
-              <label>Check-out Date</label>
-              <DatePicker
-                className="picker"
-                placeholderText="Select a Date"
-                selected={endDate && Math.max(startDate,endDate)}
-                selectsEnd
-                startDate={startDate}
-                endDate={endDate}
-                minDate={startDate} 
-                dateFormat="MMMM d, yyyy"
-                onChange={date => handleEndDateChange(date)}
-                disabledKeyboardNavigation
-              />
-            </div>
-            <div className="form-group">
-              <label>Travellers</label>
-              <Select
-                options={[1, 2, 3, 4, 5, 6, 7, 8].map(n => ({ value: n, label: n }))}
-                onChange={selectedOption => handleCapacityChange(selectedOption.value)}
-                defaultValue={{ label: capacity, value: capacity }}
-                theme={reactSelectTheme}
-              />
-            </div>
-          </div>
+          <SearchForm 
+            startDate={startDate.current}
+            endDate={endDate.current} 
+            capacity={capacity.current}
+            handleStartDateChange={handleStartDateChange}
+            handleEndDateChange={handleEndDateChange}
+            handleCapacityChange={handleCapacityChange}
+          />
 
           { hotelWithRooms.rooms.length === 0 ? 
             (<p style={{fontSize: 16, color:"#606060", textAlign: "center", padding: 60}}>No available rooms found</p>)
@@ -150,7 +114,7 @@ const HotelDetails = () => {
               <ul>
                 {hotelWithRooms.rooms.map((room, index) => (
                   <li key={room.id}>
-                    <RoomCard payload={room} startDate={startDate} endDate={endDate} index={index + 1} includeHotel={false} />
+                    <RoomCard payload={room} startDate={startDate.current} endDate={endDate.current} index={index + 1} includeHotel={false} />
                   </li>
                 ))}
               </ul>
@@ -169,15 +133,3 @@ const HotelDetails = () => {
 };
 
 export default HotelDetails;
-
-
-const reactSelectTheme = (theme) => ({
-  ...theme,
-  borderRadius: 8,
-  colors: {
-    ...theme.colors,
-    primary25: "#ebebeb",
-    primary50: "#dddddd",
-    primary: "#bb3547",
-  },
-})

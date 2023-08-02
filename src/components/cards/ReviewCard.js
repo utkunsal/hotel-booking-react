@@ -40,7 +40,7 @@ const ReviewCard = ({ review, includeHotelName, handleDeleteReview }) => {
           {review.userDisplayName} - {stars}
         </div>
       </div>
-      <div className="card-body">
+      <div className="card-body" style={{ borderRadius: 0 }}>
         <div className="card-text">{review.text}</div>
       </div>
       <div className="card-footer" style={{paddingBottom: 10}}>{new Date(review.date)

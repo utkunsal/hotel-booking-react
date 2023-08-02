@@ -1,26 +1,28 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import customAxios from "../services/api";
-import DatePicker from "react-datepicker";
-import Select from 'react-select';
 import "react-datepicker/dist/react-datepicker.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import HotelCard from "../components/cards/HotelCard";
 import { useSearchParams } from "react-router-dom";
+import SearchForm from "../components/forms/SearchForm";
+import MyMap from "../components/MyMap";
 
 const Search = () => {
-  const [locations, setLocations] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState(""); 
-  const [startDate, setStartDate] = useState(new Date()); 
-  const [endDate, setEndDate] = useState(null); 
-  const [capacity, setCapacity] = useState(2); 
+  const [locations, setLocations] = useState([]);  
   const [results, setResults] = useState([]);
   const [showWarning, setShowWarning] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = useRef(0);
+  const [refresh, setRefresh] = useState(false);
+  const [done, setDone] = useState();
+  const startDate = useRef(searchParams.has("startDate") ? new Date(searchParams.get("startDate")) : new Date());
+  const endDate = useRef(searchParams.has("endDate") ? new Date(searchParams.get("endDate")) : null);
+  const capacity = useRef(searchParams.has("capacity") ? parseInt(searchParams.get("capacity")) : 2);
+  const currentPage = useRef(searchParams.has("page") ? parseInt(searchParams.get("page")) : 0);
   const totalPages = useRef(0);
   const totalResults = useRef(0);
   const elementRefToScroll = useRef(null);
+  const [selectedLocation, setSelectedLocation] = useState()
   const tzoffset = (new Date()).getTimezoneOffset() * 60000;
 
   useEffect(() => {
@@ -33,13 +35,6 @@ const Search = () => {
       }
     };
     fetchLocations();
-    if (searchParams.has("startDate") && searchParams.has("endDate") && searchParams.has("capacity")){
-      setStartDate(new Date(searchParams.get("startDate")));
-      setEndDate(new Date(searchParams.get("endDate")));
-      setCapacity(searchParams.get("capacity"));
-      currentPage.current = searchParams.has("page") ? parseInt(searchParams.get("page")) : 0 
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -51,8 +46,10 @@ const Search = () => {
             setResults(response.data.results)
             totalPages.current = response.data.totalPages
             totalResults.current = response.data.totalItems
+            setDone(true)
         }} else {
           setResults([]);
+          setDone(false)
         }
       } catch (error) {
         console.error("Error fetching search results:", error);
@@ -62,11 +59,12 @@ const Search = () => {
   }, [searchParams])
 
   useLayoutEffect(() => {
-    elementRefToScroll.current.scrollIntoView({ behavior: 'smooth' }); 
+    if (results.length !== 0)
+      elementRefToScroll.current.scrollIntoView({ behavior: 'smooth' }); 
   }, [results])
 
   const handleSearch = () => {
-    if(endDate == null){
+    if(endDate.current == null){
       setShowWarning(true);
       setTimeout(() => setShowWarning(false), 5000);
     } else {
@@ -82,9 +80,9 @@ const Search = () => {
       }
       setSearchParams({
         ...params,
-        startDate: (new Date(startDate.getTime() - tzoffset)).toISOString().slice(0,10),
-        endDate: (new Date(endDate.getTime() - tzoffset)).toISOString().slice(0,10),
-        capacity: capacity,
+        startDate: (new Date(startDate.current.getTime() - tzoffset)).toISOString().slice(0,10),
+        endDate: (new Date(endDate.current.getTime() - tzoffset)).toISOString().slice(0,10),
+        capacity: capacity.current,
         page: currentPage.current,
       });
     }
@@ -106,7 +104,7 @@ const Search = () => {
 
   const renderResults = () => {
     if (results.length === 0) {
-      return <div className="centered-text">No hotels found.</div>;
+      return <p className="centered-text">No hotels found.</p>;
     }
     return (
       <>
@@ -116,7 +114,7 @@ const Search = () => {
           <ul>
             {results.map((result) => (
               <li key={result.hotel.id}>
-                <HotelCard payload={result} startDate={startDate} endDate={endDate} capacity={capacity} />
+                <HotelCard payload={result} startDate={startDate.current} endDate={endDate.current} capacity={capacity.current} />
               </li>
             ))}
           </ul>
@@ -133,89 +131,63 @@ const Search = () => {
     );
   };
 
+  const handleLocationChange = (location) => {
+    setSelectedLocation(location)
+  }
+
+  const handleStartDateChange = (date) => {
+    if (endDate.current && (endDate.current < date)){
+      endDate.current = date
+    }
+    startDate.current = date
+    setRefresh(!refresh)
+  }
+
+  const handleEndDateChange = (date) => {
+    endDate.current = date
+    setRefresh(!refresh)
+  }
+
+  const handleCapacityChange = (newCapacity) => {
+    capacity.current = newCapacity
+  }
+
+
   return (
     <>
-      <>
-        <div className="container">
-          <p className="centered-text">Welcome</p>
-          <div className="center-content search-form">
-            <div className="form-group">
-              <label>Location</label>
-              <Select
-                options={locations.map(location => ({ value: location, label: location }))}
-                onChange={selectedOption => setSelectedLocation(selectedOption?.value)}
-                placeholder="Select a Location"
-                theme={reactSelectTheme}
-              />
-            </div>
-            <div className="form-group">
-              <label>Check-in Date</label>
-              <DatePicker
-                filterDate={d => {
-                  return d.getTime() > new Date().getTime() - (1000 * 3600 * 24);
-                }}
-                className="picker"
-                placeholderText="Select a Date"
-                disabledKeyboardNavigation
-                selected={startDate}
-                selectsStart
-                startDate={startDate}
-                endDate={endDate}
-                dateFormat="MMMM d, yyyy"
-                onChange={date => {
-                  setStartDate(date);
-                  if (endDate && (endDate < date)){
-                    setEndDate(date);
-                  }
-                }}
-              />
-            </div>
-            <div className="form-group">
-              <label>Check-out Date</label>
-              <DatePicker
-                className="picker"
-                placeholderText="Select a Date"
-                disabledKeyboardNavigation
-                selected={endDate && Math.max(startDate,endDate)}
-                selectsEnd
-                startDate={startDate}
-                endDate={endDate}
-                minDate={startDate} 
-                dateFormat="MMMM d, yyyy"
-                onChange={date => setEndDate(date)}
-              />
-            </div>
-            <div className="form-group">
-              <label>Travellers</label>
-              <Select
-                options={[1, 2, 3, 4, 5, 6, 7, 8].map(n => ({ value: n, label: n }))}
-                onChange={selectedOption => setCapacity(selectedOption.value)}
-                defaultValue={{ label: capacity, value: capacity }}
-                theme={reactSelectTheme}
-              />
-            </div>
-          </div>
-          <div className="btn-container">
-            <button className="button" onClick={handleSearch} >Search</button>
-            <div ref={elementRefToScroll} className="warning">{showWarning && "Plase Select a Check-out Date!"}</div>
-          </div>
+      <div className="container card card-body" style={{padding: 0, marginBottom: 30}}>
+        <p className="centered-text">Find Your Dream Hotel.</p>
+        
+        <SearchForm 
+          locations={locations}
+          selectedLocation={selectedLocation}
+          startDate={startDate.current}
+          endDate={endDate.current} 
+          capacity={capacity.current}
+          handleLocationChange={handleLocationChange}
+          handleStartDateChange={handleStartDateChange}
+          handleEndDateChange={handleEndDateChange}
+          handleCapacityChange={handleCapacityChange}
+        />
+
+        <div className="btn-container">
+          <button className="button" onClick={handleSearch}>Search</button>
+          <div ref={elementRefToScroll} className="warning">{showWarning && "Plase Select a Check-out Date!"}</div>
         </div>
-        {renderResults()}
-      </>
+      </div>
+      {done ? 
+        renderResults() 
+      :
+        <div>
+          <MyMap 
+            locations={locations}
+            selectedLocation={selectedLocation}
+            handleLocationChange={handleLocationChange}
+          />
+        </div>
+       }
     </>
   );
 };
 
 export default Search;
-
-
-const reactSelectTheme = (theme) => ({
-  ...theme,
-  borderRadius: 8,
-  colors: {
-    ...theme.colors,
-    primary25: "#ebebeb",
-    primary50: "#dddddd",
-    primary: "#bb3547",
-  },
-})

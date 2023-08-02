@@ -29,7 +29,7 @@ const HotelCard = ({ payload, startDate, endDate, capacity }) => {
         borderTopLeftRadius: 8,
         borderBottomLeftRadius: 8
         }} alt="Hotel" />
-      <div className="card-body" style={{width: "45%"}}>
+      <div className="card-body" style={{width: "45%", borderTopLeftRadius: 0, borderBottomLeftRadius: 0}}>
         <div className="container-spaced" style={{padding: 20}}>
           <div>
             <div style={{fontSize: 20}}>{payload.hotel.name}</div>

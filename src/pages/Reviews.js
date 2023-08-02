@@ -3,11 +3,13 @@ import customAxios from "../services/api";
 import ReviewCard from "../components/cards/ReviewCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import ReactLoading from "react-loading";
 
 const Reviews = ({ source, size, includeHotelName, refresh }) => {
   const [reviews, setReviews] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [innerRefresh, setInnerRefresh] = useState(true);
+  const [done, setDone] = useState();
   const totalPages = useRef(0);
   const totalResults = useRef(0);
   const elementRefToScroll = useRef();
@@ -22,6 +24,7 @@ const Reviews = ({ source, size, includeHotelName, refresh }) => {
             setReviews(response.data.reviews);
             totalPages.current = response.data.totalPages
             totalResults.current = response.data.totalItems
+            setDone(true)
           }
         })
         .catch((error) => {
@@ -53,35 +56,45 @@ const Reviews = ({ source, size, includeHotelName, refresh }) => {
   }
 
   return (
-    <div style={{ flexDirection: 'column' }}>
-      {totalResults.current > 0 ? 
-        <>
-          <div ref={elementRefToScroll} className="center-content" style={{fontSize: 13, paddingTop: 20}}>
-            {totalResults.current} review{totalResults.current !== 1 && "s"}. Showing {currentPage*size+1}-{Math.min((currentPage+1)*size,totalResults.current)}.
-          </div>
-          <>
-            <ul>
-              {reviews.map((review) => (
-                <li key={review.id}>
-                  <ReviewCard review={review} includeHotelName={includeHotelName} handleDeleteReview={handleDeleteReview}/>
-                </li>
-              ))}
-            </ul>
-            <div className="btn-container-page">
-              <button className="page-button" onClick={handlePrevPage} disabled={currentPage === 0}>
-                <FontAwesomeIcon icon={faChevronLeft} />
-              </button>
-              <div style={{padding: 10}}>{currentPage + 1}/{totalPages.current}</div>
-              <button className="page-button" onClick={handleNextPage} disabled={currentPage >= totalPages.current - 1}>
-                <FontAwesomeIcon icon={faChevronRight} />
-              </button>
-            </div>
-          </>
-        </>
+    <div className="center-content">
+      {!done ? 
+        <ReactLoading
+          type={"spin"}
+          color={"#666666"}
+          height={30}
+          width={30}
+        />
       :
-      <p className="center-content" style={{fontSize: 13}}>
-        You don't have any reviews yet.
-      </p>
+        <>
+          {totalResults.current > 0 ? 
+            <>
+              <div ref={elementRefToScroll} className="center-content" style={{fontSize: 13, paddingTop: 20}}>
+                {totalResults.current} review{totalResults.current !== 1 && "s"}. Showing {currentPage*size+1}-{Math.min((currentPage+1)*size,totalResults.current)}.
+              </div>
+              <>
+                <ul>
+                  {reviews.map((review) => (
+                    <li key={review.id}>
+                      <ReviewCard review={review} includeHotelName={includeHotelName} handleDeleteReview={handleDeleteReview}/>
+                    </li>
+                  ))}
+                </ul>
+                <div className="btn-container-page">
+                  <button className="page-button" onClick={handlePrevPage} disabled={currentPage === 0}>
+                    <FontAwesomeIcon icon={faChevronLeft} />
+                  </button>
+                  <div style={{padding: 10}}>{currentPage + 1}/{totalPages.current}</div>
+                  <button className="page-button" onClick={handleNextPage} disabled={currentPage >= totalPages.current - 1}>
+                    <FontAwesomeIcon icon={faChevronRight} />
+                  </button>
+                </div>
+              </>
+            </>
+          :
+          <p className="center-content" style={{fontSize: 13}}>
+            You don't have any reviews yet.
+          </p>}
+        </>
       }
     </div>
   );

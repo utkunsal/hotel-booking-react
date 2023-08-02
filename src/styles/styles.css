@@ -51,7 +51,7 @@
 }
 
 .card-header {
-  background-color: #fafafa;
+  background-color: #f4f4f4;
   color: #666;
   padding: 10px;
   padding-left: 30px;
@@ -62,7 +62,7 @@
 }
 
 .card-body {
-  background-color: #fafafa;
+  background-color: #f4f4f4;
   padding: 10px;
   border-radius: 8px;
 }
@@ -83,7 +83,7 @@
 }
 
 .card-footer {
-  background-color: #fafafa;
+  background-color: #f4f4f4;
   text-align: end;
   color: #666;
   padding: 5px;
@@ -163,7 +163,7 @@ li {
 }
 
 .cancel-button {
-  background-color: #fafafa;
+  background-color: #f4f4f4;
   color: #831313;
   padding: 5px 17.5px;
   border: 1.5px solid #831313;
@@ -386,3 +386,11 @@ input {
   top: -15%;
 }
 
+/* Map styles */
+.leaflet-control { z-index: 0 !important}
+.leaflet-pane { z-index: 0 !important}
+.leaflet-top, .leaflet-bottom {z-index: 0 !important}
+
+.map {
+  border-radius: 8px;
+}
