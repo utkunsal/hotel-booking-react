@@ -92,7 +92,7 @@ const Reviews = ({ source, size, includeHotelName, refresh }) => {
             </>
           :
           <p className="center-content" style={{fontSize: 13}}>
-            You don't have any reviews yet.
+            No reviews yet.
           </p>}
         </>
       }

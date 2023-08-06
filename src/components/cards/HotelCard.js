@@ -19,6 +19,11 @@ const HotelCard = ({ payload, startDate, endDate, capacity }) => {
     });
     navigate(`/hotels/${payload.hotel.id}?${queryParams.toString()}`);
   };
+
+  const formatter = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
   
   return (
     <div className="card container-spaced" style={{height: 200}} onClick={handleClick}>
@@ -34,7 +39,7 @@ const HotelCard = ({ payload, startDate, endDate, capacity }) => {
           <div>
             <div style={{fontSize: 20}}>{payload.hotel.name}</div>
             <div style={{fontSize: 14, color: "#666666"}}>{payload.hotel.city}, {payload.hotel.country}</div>
-            <div style={{fontSize: 14.4, paddingTop: 10}}>Rating {payload.avgRating == null ? "-" : payload.avgRating}/5</div>
+            <div style={{fontSize: 14.4, paddingTop: 10}}>Rating {payload.avgRating == null ? "-" : formatter.format(payload.avgRating)}/5</div>
             {payload.reviewCount === 0 ? <div style={{fontSize: 12}}>no reviews yet</div>:
             <div style={{fontSize: 12}}>{payload.reviewCount} review{payload.reviewCount !== 1 && "s"}</div>
             }

@@ -62,6 +62,11 @@ const HotelDetails = () => {
     setRefresh(!refresh);
   }
 
+  const formatter = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+
   return (
     <>
       <button className="back-button" onClick={handleGoBack}>
@@ -87,7 +92,7 @@ const HotelDetails = () => {
                 <div style={{fontSize: 15}}>Rating</div>
                 <div style={{ fontSize: '23px', display: 'flex', alignItems: 'center' }}>
                   <span style={{ marginRight: '5px' }}>&#11089;</span>
-                  {hotelWithRooms.avgRating == null ? "-" : hotelWithRooms.avgRating}/5
+                  {hotelWithRooms.avgRating == null ? "-" : formatter.format(hotelWithRooms.avgRating)}/5
                 </div>                  
                 {hotelWithRooms.reviewCount === 0 ? <div style={{fontSize: 13}}>no reviews yet</div>:
                 <div style={{fontSize: 13}}>{hotelWithRooms.reviewCount} review{hotelWithRooms.reviewCount !== 1 && "s"}</div>

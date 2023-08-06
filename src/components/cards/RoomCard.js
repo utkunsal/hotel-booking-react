@@ -116,11 +116,11 @@ const RoomCard = ({ payload, startDate, endDate, index, includeHotel, id }) => {
             {includeHotel && 
               <div>{startDate.toLocaleDateString('en-US', {
                   year: 'numeric',
-                  month: 'long',
+                  month: 'short',
                   day: 'numeric',
                 })} to {endDate.toLocaleDateString('en-US', {
                   year: 'numeric',
-                  month: 'long',
+                  month: 'short',
                   day: 'numeric',
                 })}
               </div>
